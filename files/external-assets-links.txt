@@ -1,0 +1,9 @@
+
+VSCode-Shortcut-for-Windows-
+https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf
+
+VSCode-Shortcut-for-Mac-
+https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf
+
+VSCode-Shortcut-for-Linux-
+https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf

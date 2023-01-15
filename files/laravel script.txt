@@ -1,0 +1,86 @@
+composer global require laravel/installer
+laravel new contact-app
+cd contact-app
+php artisan serve
+php artisan migrate:install
+php artisan migrate
+php artisan make:migration create_companies_table
+php artisan migrate
+php artisan migrate:rollback
+php artisan make:seeder CompaniesTebleSeeder
+php artisan db:seed --class=CompaniesTebleSeeder
+php artisan db:seed
+php artisan make:model Company
+-------------------------------------------------------
+php artisan tinker
+-use App\Models\Company
+Company::all()
+Company::take(3)->get()
+Company::find([1,2,3])
+Company::where('website','{email}')->first()
+Company::whereWebsite('{email}')->first()
+$company = new Company()
+$company->save()
+$company->delete()
+Company::destroy(11)
+-------------------------------------------------------
+php artisan make:model Contract -m
+php artisan migrate
+php artisan make:factory ContactFactory -m Contact
+php artisan make:seeder ContactTebleSeeder
+php artisan db:seed
+composer dump-autoload
+php artisan migrate:fresh --seed
+php artisan make:factory CompanyFactory -m Company
+php artisan migrate:fresh --seed
+php artisan route:list
+php artisan make:controller ContractController
+-------------------------------------------------------
+php artisan vendor:publish 
+-pagination
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

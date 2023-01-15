@@ -1,0 +1,31 @@
+<blockquote><p>You can download this article in PDF format in the course resource</p></blockquote><p>In this article, you'll learn how to upgrade your PHP version on XAMPP. Here, we'll demonstrate upgrading the PHP version from 7.4 to 8.1. However, you can use this guide for upgrading other PHP versions.</p><ol><li><p>Open your browser, then visit this link: <a href="https://www.php.net/downloads" rel="noopener noreferrer" target="_blank">https://www.php.net/downloads</a></p></li><li><p>You can click on the "Windows downloads" option to download the PHP binary for windows. Download the Thread Safe version.</p></li><li><p>Once the download is finished, you can extract the zip file then rename it to <strong>php-8.1</strong>.</p></li><li><p>Go to <strong>php-8.1</strong> folder, then copy <strong>php.ini</strong> from <strong>php.ini-development</strong>.</p></li><li><p>Open the <strong>php.ini</strong> file with your favourite code editor. Find the <code>extension_dir</code> (You can use Cmd+F or Ctrl+F). Once it is found, you can enable it by removing the semicolon.</p></li></ol><pre class="prettyprint linenums"># from:
+; extension_dir = "ext"
+# to:
+extension_dir = "ext"</pre><ol start="6"><li><p>You can enable the extensions such as <code>curl</code>, <code>gd</code>, <code>mbstring</code>, etc. Don't forget to save the change.</p></li></ol><pre class="prettyprint linenums">extension=bz2
+extension=curl
+;extension=ffi
+;extension=ftp
+extension=fileinfo
+extension=gd
+;extension=gettext
+;extension=gmp
+;extension=intl
+;extension=imap
+;extension=ldap
+extension=mbstring
+;extension=exif &nbsp; &nbsp;&nbsp; ; Must be after mbstring as it depends on it
+extension=mysqli
+;extension=oci8_12c&nbsp; ; Use with Oracle Database 12c Instant Client
+;extension=oci8_19&nbsp; ; Use with Oracle Database 19 Instant Client
+;extension=odbc
+extension=openssl
+;extension=pdo_firebird
+extension=pdo_mysql
+;extension=pdo_oci
+;extension=pdo_odbc
+extension=pdo_pgsql
+extension=pdo_sqlite
+extension=pgsql
+;extension=shmop
+extension=sqlite3</pre><ol start="7"><li><p>Move the <strong>php-8.1</strong> folder to <strong>C:\xampp</strong> (I assume you install it in C drive).</p></li><li><p>Rename the php folder (default php) to any name, let's say <strong>php_old</strong>. Then rename the <strong>php_8.1</strong> to <strong>php</strong>.</p></li><li><p>Open your terminal, then check the PHP version. If you've already put the PHP variable in Environment variables before, you'll see it in the output PHP version 8.1.</p></li></ol><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-02-28_10-18-28-903f474241ffbaf29d2e62f0f9f6d3b7.png"></figure><ol start="10"><li><p>Now, you can try to install the most recent Laravel version</p></li></ol><pre class="prettyprint linenums">laravel new laravel-9</pre><ol start="11"><li><p>Once the project is created, you can go to your project and start up the PHP built-in server.</p></li></ol><pre class="prettyprint linenums">cd laravel-9
+php artisan serve</pre><ol start="12"><li><p>If you go to your browser, you'll see Laravel 9 welcome page displayed on the screen.</p></li></ol><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-02-28_10-18-28-83ec01cbf59a10ed4586cd2c6243104e.png"></figure><p><br></p>

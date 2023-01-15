@@ -1,0 +1,20 @@
+<blockquote><p>If you're not using Laravel 8+ just skip this guide</p></blockquote><p>In the previous lesson we've moved <code>Company::factory()</code> as well as <code>Contact::factory()</code> from <code>CompaniesTableSeeder</code> and <code>ContactsTableSeeder</code> to <code>DatabaseSeeder</code>. Our <code>run</code> method now looks as follow.</p><pre class="prettyprint linenums">class DatabaseSeeder extends Seeder
+{
+ &nbsp; &nbsp;public function run()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;Company::factory()-&gt;count(10)-&gt;create();
+ &nbsp; &nbsp; &nbsp; &nbsp;Contact::factory()-&gt;count(50)-&gt;create();
+ &nbsp;  }
+}</pre><p>Since <code>Company</code> model has <code>hasMany</code> relationship to <code>Contact</code> model we can utilize Factory relationship which simplified above code.</p><p>Open your terminal, then enter tinker by saying:</p><pre class="prettyprint linenums">php artisan tinker</pre><p>Let's say we want to create a company that has 3 contacts. Here we can use <code>has</code> method that provided by the Laravel's factories. The <code>has</code> method receives a factory instance, in this case we can specify the Contact factory instance.</p><pre class="prettyprint linenums">$company = Company::factory()-&gt;has(
+ &nbsp;Contact::factory()-&gt;count(3)
+)-&gt;create()</pre><p>If we execute above code, we'll see a company instance printed out.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-04_07-14-15-e031bfff0853e23f51e5be5b0a8a0121.png"></figure><p>If we now see its contacts, we'll get 3 contacts.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-04_07-14-35-7a769e89951593e390c21d9cbfb63acc.png"></figure><p><br></p><p>Now, to create let's say 10 companies, and for each company we want to generate 3 contacts, we can call <code>count</code> method before <code>create</code> method call and specify the number.</p><pre class="prettyprint linenums">Company::factory()-&gt;has(
+ &nbsp;Contact::factory()-&gt;count(3)
+)
+ &nbsp;-&gt;count(10)
+ &nbsp;-&gt;create()</pre><p>We can make above code much simpler by using magic method <code>has[relationship]</code> like so.</p><pre class="prettyprint linenums">Company::factory()-&gt;hasContacts(3)-&gt;count(10)-&gt;create()</pre><p>With Factory relationship our <code>DatabaseSeeder</code> now looks like this.</p><pre class="prettyprint linenums">class DatabaseSeeder extends Seeder
+{
+ &nbsp; &nbsp;public function run()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;Company::factory()-&gt;hasContacts(5)-&gt;count(10)-&gt;create();
+ &nbsp;  }
+}</pre><p>Please check out this link to get more information about Factory Relationships.</p><p><a href="https://laravel.com/docs/8.x/database-testing#factory-relationships" rel="noopener noreferrer" target="_blank">https://laravel.com/docs/8.x/database-testing#factory-relationships</a></p>
