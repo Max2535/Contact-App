@@ -20,6 +20,15 @@ Route::get('/', function () {
 
 Route::get('/contracts',[ContractController::class,'index'])->name('contracts.index');
 
+Route::post('/contracts',[ContractController::class,'store'])->name('contracts.store');
+
 Route::get('/contracts/create',[ContractController::class,'create'])->name('contracts.create');
  
 Route::get('/contracts/{id}',[ContractController::class,'show'])->name('contracts.show');
+
+Route::put('/contracts/{id}',[ContractController::class,'update'])->name('contracts.update');
+
+Route::delete('/contracts/{id}',[ContractController::class,'destroy'])->name('contracts.destroy');
+
+Route::get('/contracts/{id}/edit',[ContractController::class,'edit'])->name('contracts.edit');
+
