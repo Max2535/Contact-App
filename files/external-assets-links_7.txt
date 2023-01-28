@@ -1,0 +1,15 @@
+
+Code-changes
+https://bitbucket.org/edomaru/laravel-contact-app/commits/399d5532b4bef90d66436bc6b96800d0efbd271e
+
+Code-changes-Laravel-8-
+https://bitbucket.org/edomaru/laravel-contact-app-l8/commits/17bbcfa88c7cb65bcfe26b80da405a3a76fce5b1
+
+Local-Scopes-Reference
+https://laravel.com/docs/6.x/eloquent#local-scopes
+
+Global-Scopes-Reference
+https://laravel.com/docs/6.x/eloquent#global-scopes
+
+PHP-Trait-reference
+https://www.php.net/manual/en/language.oop5.traits.php

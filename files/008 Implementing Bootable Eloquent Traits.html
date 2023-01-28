@@ -1,0 +1,87 @@
+<p>Before we actually leave this section, let's make our global scopes, beside reusable it also easy to implement. At this point, we can apply our global scopes (<code>SearchScope</code> and <code>FilterScope</code>) in a certain model by assign them in model's <code>booted</code> method like so:</p><pre class="prettyprint linenums">protected static function booted()
+{ &nbsp;
+    static::addGlobalScope(new SearchScope);
+    static::addGlobalScope(new FilterScope);
+}</pre><p>Then define the <code>filterColumns</code> and <code>SearchColumns</code> properties in your model like so:</p><pre class="prettyprint linenums">class Contact extends Model
+{
+ &nbsp; &nbsp;public $filterColumns = ['company_id'];
+ &nbsp; &nbsp;public $searchColumns = ['first_name', 'last_name', 'email'];
+ &nbsp; &nbsp;// ...
+}</pre><p>Now in this lesson we're going to learn another technique to make our global scopes much easier to implement into a model.</p><h4>1. Put the global scopes in a Trait</h4><ol start="0"><li><p>Go to <code>Contact</code> model, then cut the model's <code>booted</code> method. Now your <code>Contact</code> model will look like this:</p></li></ol><pre class="prettyprint linenums">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // This added in Laravel 8+
+
+class Contact extends Model
+{
+ &nbsp; &nbsp;use HasFactory; // This added in Laravel 8+
+
+ &nbsp; &nbsp;protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'address', 'company_id'];
+ &nbsp; &nbsp;public $filterColumns = ['company_id'];
+
+ &nbsp; &nbsp;public function company()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;return $this-&gt;belongsTo(Company::class);
+ &nbsp;  }
+
+ &nbsp; &nbsp;public function scopeLatestFirst($query)
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;return $query-&gt;orderBy('id', 'desc');
+ &nbsp;  }
+}</pre><ol start="2"><li><p>Go to <code>Scopes</code> folder, then create a new file called <code>FilterSearchScope.php</code>. In that file define a <code>FilterSearchScop</code> trait as follow.</p></li></ol><pre class="prettyprint linenums">&lt;?php
+
+namespace App\Scopes;
+
+trait FilterSearchScope
+{
+ &nbsp; &nbsp;
+}</pre><ol start="3"><li><p>Paste the <code>booted</code> method that you grabbed from the <code>Contact</code> model. Change the method name from <code>booted</code> to <code>bootFilterSearchScope</code>.</p></li></ol><pre class="prettyprint linenums">&lt;?php
+
+namespace App\Scopes;
+
+trait FilterSearchScope
+{
+ &nbsp; &nbsp;protected static function bootFilterSearchScope()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;static::addGlobalScope(new ContactSearchScope);
+ &nbsp; &nbsp; &nbsp; &nbsp;static::addGlobalScope(new FilterScope);
+ &nbsp;  }
+}</pre><blockquote><p>Note that by convention all static method named <code>boot[TraitName]</code> that you defined on your <code>trait</code> will be executed by the <code>boot()</code> method on Eloquent model.</p></blockquote><ol start="4"><li><p>To make it consistent let's use the <code>SearchScope</code> instead of <code>ContactSearchScope</code>.</p></li></ol><pre class="prettyprint linenums">&lt;?php
+
+namespace App\Scopes;
+
+trait FilterSearchScope
+{
+ &nbsp; &nbsp;protected static function bootFilterSearchScope()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;static::addGlobalScope(new SearchScope);
+ &nbsp; &nbsp; &nbsp; &nbsp;static::addGlobalScope(new FilterScope);
+ &nbsp;  }
+}</pre><h4>2. Use the <code>FilterSearchScope</code> trait in the model</h4><p>Back to <code>Contact</code> model then use the <code>FilterSearchScope</code> trait that we've just created. Also since we assigned the <code>SearchScope</code> in the trait we also need to define the <code>searchColumns</code> on the model.</p><pre class="prettyprint linenums">&lt;?php
+
+namespace App\Models;
+
+use App\Scopes\FilterSearchScope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Contact extends Model
+{
+ &nbsp; &nbsp;use HasFactory, FilterSearchScope;
+
+ &nbsp; &nbsp;protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'address', 'company_id'];
+ &nbsp; &nbsp;public $searchColumns = ['first_name', 'last_name', 'email'];
+ &nbsp; &nbsp;public $filterColumns = ['company_id'];
+
+ &nbsp; &nbsp;public function company()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;return $this-&gt;belongsTo(Company::class);
+ &nbsp;  }
+
+ &nbsp; &nbsp;public function scopeLatestFirst($query)
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;return $query-&gt;orderBy('id', 'desc');
+ &nbsp;  }
+}</pre><p>So now, whenever you want to apply the <code>FilterScope</code> and <code>SearchScope</code> scopes together in your model, you only need to use the <code>FilterSearchScope</code> on your model, then specify the filter columns in <code>filterColumns</code> and search columns in <code>searchColumns</code>. I think this way is much simpler, right?</p><p>Now, let's finally move on to the next lesson.</p>
