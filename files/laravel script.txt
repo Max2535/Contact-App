@@ -1,3 +1,9 @@
+[Xdebug]
+zend_extension = "C:\xampp\php8\ext\php_xdebug.dll"
+xdebug.mode=debug
+xdebug.start_with_request=yes
+xdebug.idekey=VSCODE
+
 composer global require laravel/installer
 laravel new contact-app
 cd contact-app
@@ -38,10 +44,13 @@ php artisan make:controller ContractController
 -------------------------------------------------------
 php artisan vendor:publish 
 -pagination
- 
-
-
-
+ ------------------------------------------------------
+ composer require laravel/ui --dev
+ php artisan ui:auth 
+php artisan migrate
+php artisan make:migration add_user_id_to_contracts_table
+php artisan migrate
+php artisan make:controller Settings\AccountController
 
 
 

@@ -16,11 +16,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $users = \App\Models\User::factory()->count(5)->create();
 
-        \App\Models\Company::factory()->count(10)->create()->each(function ($company) {
-            $company->contacts()->saveMany(
-                \App\Models\Contract::factory()->count(rand(5, 10))->make()
+        $users->each(function ($user) {
+
+            $companies = $user->companies()->saveMany(
+                \App\Models\Company::factory()->count(rand(2, 5))->make()
             );
+
+            $companies->each(function ($company) use ($user) {
+                $company->contacts()->saveMany(
+                    \App\Models\Contract::factory()->count(rand(5, 10))
+                    ->make()
+                    ->map(function($contract) use ($user){
+                        $contract->user_id = $user->id;
+                        return $contract;
+                    })    
+                );
+            });
+
         });
     }
 }

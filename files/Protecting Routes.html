@@ -1,0 +1,43 @@
+<p>In this lesson we will see how to protect our routes from being access by unauthenticated user. We have integrated Authentication in our application. But any user can still access the <code>contacts</code> page without login.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/2020-01-09_14-32-10-f556435fcc12cc0fab310b5a926932f8.png"></figure><p>So, in order to protect that route we can use <code>auth</code> middleware which is defined at <code>Illuminate\Auth\Middleware\Authenticate</code>. This middleware is already registered in the <code>Kernel.php</code> file. You can find it <code>routeMiddleware</code> property inside <code>app\Http\Kernel.php</code>.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/2020-01-09_14-32-47-17224779c44fbaeb57568ac82e61981a.png"></figure><p>To protect your routes you can follow one of these two options:</p><ol start="0"><li><p>Attach the <code>auth</code> middleware in your route definition.</p></li><li><p>Call the <code>auth</code> middleware from your controller's constructor.</p></li></ol><h4>1. Attaching the <code>auth</code> middleware in routes definition</h4><p>To attach the <code>auth</code> middleware you can add in your route definition with <code>middleware</code> and pass the <code>auth</code> middleware.</p><p>In <code>web.php</code> let's firstly protect the <code>contacts.index</code> with <code>auth</code> middleware like so:</p><pre class="prettyprint linenums">Route::get('/contacts', [ContactController::class, 'index'])
+ &nbsp; &nbsp; -&gt;name('contacts.index')
+ &nbsp; &nbsp; -&gt;middleware('auth');</pre><p>Now, if you're not signed in and try to access the <strong>All Contacts</strong> page. You'll be redirected to the <code>login</code> page.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/2020-01-09_14-33-31-a9a81213ae6937ad3773e9e88b013a95.png"></figure><p>You can do the similar thing to other contact routes to protect them from being accessed by unauthenticated user like so:</p><pre class="prettyprint linenums">Route::post('/contacts', [ContactController::class, 'store'])
+ &nbsp; &nbsp; -&gt;name('contacts.store')
+ &nbsp; &nbsp; -&gt;middleware('auth');
+Route::get('/contacts/create', [ContactController::class, 'create'])
+ &nbsp; &nbsp; -&gt;name('contacts.create')
+ &nbsp; &nbsp; -&gt;middleware('auth');
+Route::get('/contacts/{id}', [ContactController::class, 'show'])
+ &nbsp; &nbsp; -&gt;name('contacts.show')
+ &nbsp; &nbsp; -&gt;middleware('auth');
+Route::put('/contacts/{id}', [ContactController::class, 'update'])
+ &nbsp; &nbsp; -&gt;name('contacts.update')
+ &nbsp; &nbsp; -&gt;middleware('auth');
+Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])
+ &nbsp; &nbsp; -&gt;name('contacts.destroy')
+ &nbsp; &nbsp; -&gt;middleware('auth');
+Route::get('/contacts/{id}/edit', [ContactController::class, 'edit'])
+ &nbsp; &nbsp; -&gt;name('contacts.edit')
+ &nbsp; &nbsp; -&gt;middleware('auth');</pre><p>Although this way is valid, but here we find repetitive <code>middleware</code> calling in our route definition. We can make these much simpler by assigning the <code>auth</code> middleware in route <code>group</code>, then move our existing routes inside.</p><pre class="prettyprint linenums">Route::middleware('auth')-&gt;group(function () {
+ &nbsp; &nbsp;Route::get('/contacts', [ContactController::class, 'index'])-&gt;name('contacts.index');
+ &nbsp; &nbsp;Route::post('/contacts', [ContactController::class, 'store'])-&gt;name('contacts.store');
+ &nbsp; &nbsp;Route::get('/contacts/create', [ContactController::class, 'create'])-&gt;name('contacts.create');
+ &nbsp; &nbsp;Route::get('/contacts/{id}', [ContactController::class, 'show'])-&gt;name('contacts.show');
+ &nbsp; &nbsp;Route::put('/contacts/{id}', [ContactController::class, 'update'])-&gt;name('contacts.update');
+ &nbsp; &nbsp;Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])-&gt;name('contacts.destroy');
+ &nbsp; &nbsp;Route::get('/contacts/{id}/edit', [ContactController::class, 'edit'])-&gt;name('contacts.edit');
+});</pre><p><br></p><h4>2. Calling the <code>auth</code> middleware in controller's constructor</h4><p>Before we call the <code>auth</code> middleware in our constructor's controller, make sure you're not call the <code>middleware('auth')</code> in your route definition.</p><p>Open the <code>ContactController</code>. Then define a constructor, add the <code>middleware</code> call, then pass in the <code>auth</code> middleware.</p><pre class="prettyprint linenums">class ContactController extends Controller
+{
+ &nbsp; &nbsp;public function __construct()
+ &nbsp;  {
+ &nbsp; &nbsp; &nbsp; &nbsp;$this-&gt;middleware('auth');
+ &nbsp;  }
+ &nbsp;
+    // other methods definition
+    // ...
+}</pre><p>By doing this way the <code>auth</code> middleware will get applied to all methods that defined in the controller. This because constructor will automatically called when you instantiate an object.</p><p>But you can utilise <code>except()</code> or <code>only()</code> method to apply the middleware on a certain method explicitly.</p><h4>2.1. Using middleware <code>only</code> method</h4><p>We can use middleware <code>only</code> method to <em>only</em> apply a certain middlware to the given methods. For example if you want to apply the <code>auth</code> middleware only on <code>create</code>, <code>update</code> and <code>delete</code> methods, you can do like this:</p><pre class="prettyprint linenums">public function __construct()
+{
+    $this-&gt;middleware('auth')-&gt;only('create', 'update', 'destroy');
+}</pre><p>Now if you see your routes in your terminal:</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-08_09-46-33-cb2ba22d267c30578a1751c343504525.png"></figure><p>The <code>auth</code> middleware only applied on <code>contacts.create</code>, <code>contacts.update</code> and <code>contacts.destroy</code> routes.</p><h4>2.2. Using middleware <code>except</code> method</h4><p>We can use middleware <code>except</code> method to exclude the given methods from being applied by a certain middleware. If you want to exclude the <code>auth</code> middleware on let's say <code>index</code> and <code>show</code> methods you can do like so:</p><pre class="prettyprint linenums">public function __construct()
+{
+    $this-&gt;middleware('auth')-&gt;except('index', 'show');
+}</pre><p>If you now see your routes in your terminal:</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-08_09-46-59-ee995680a09a9b2ec7264f3e25a2ab07.png"></figure><p>The <code>auth</code> middleware applied to all <code>contacts.*</code>, except <code>contacts.index</code> and <code>contacts.show</code> route.</p><p>So that's how you could protect your routes using <code>auth</code> middleware. You can apply it on the route definition or on the controller's constructor.</p>

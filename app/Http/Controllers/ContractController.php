@@ -9,26 +9,37 @@ use App\Models\Contract;
 
 class ContractController extends Controller
 {
+    public function __construct()
+    {
+        //$this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
+        //$this->middleware('auth')->only('create', 'update', 'destroy');
+        //$this->middleware('auth')->except('index', 'show');
+    }
+
     public function index()
     {
-        $companies = Company::orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $user = auth()->user();
+        $companies = $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
         //DB::enableQueryLog();
-        $contracts = Contract::latestFirst()->paginate(10);
+        $contracts = $user->contract()->latestFirst()->paginate(10);
         //dd(DB::getQueryLog());
         return view('contracts.index', compact('contracts', 'companies'));
     }
 
     public function create()
     {
+        $user = auth()->user();
         $contract = new Contract();
-        $companies = Company::orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $companies =  $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
         return view('contracts.create', compact('companies', 'contract'));
     }
 
     public function edit($id)
     {
+        $user = auth()->user();
         $contract = Contract::findOrFail($id);
-        $companies = Company::orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $companies = $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
         return view('contracts.edit', compact('companies', 'contract'));
     }
 
@@ -42,7 +53,7 @@ class ContractController extends Controller
             'company_id' => 'required|exists:companies,id',
         ]);
 
-        Contract::create($request->all());
+        $request->user()->contracts->create($request->all());
 
         return redirect()->route('contracts.index')->with('message', 'Contract has been added successfully');
     }

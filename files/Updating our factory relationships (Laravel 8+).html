@@ -1,0 +1,42 @@
+<h4>1. Introduction</h4><p>If you open up <code>DatabaseSeeder.php</code> you'll see this line of code in <code>run</code> method:</p><pre class="prettyprint linenums">Company::factory()-&gt;hasContacts(5)-&gt;count(50)-&gt;create();</pre><p>If you remember, this code will create 50 companies, and for each generated company it will generate 5 contacts.</p><p>Now since we have added <code>user_id</code> column in both <code>companies</code> and <code>contacts</code> tables to link them to <code>users</code> table, we need to make a bit change to our factory relationships.</p><p>In this lesson I'm going to show you <em>two options</em> on how to update factory relationships.</p><h4>2. 1st option: Simple option</h4><p><em>First</em>, before we generate companies and contacts table with Factory, we generate some users, let's say 5 users.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create();
+
+Company::factory()-&gt;hasContacts(5)-&gt;count(50)-&gt;create();</pre><p><em>Second</em>, let's open <code>CompanyFactory</code>. In <code>definition</code> method we add in the returned array a new item. The array key is <code>user_id</code>, while the value is contain id of the user that taken from <code>User</code> model randomly. Don't forget to import the <code>User</code> model namespace.</p><p><strong>database/factories/CompanyFactory.php</strong></p><pre class="prettyprint linenums">public function definition()
+{
+ &nbsp;return [
+ &nbsp; &nbsp;// ...
+ &nbsp; &nbsp;'user_id' =&gt; User::pluck('id')-&gt;random()
+  ];
+}</pre><p><em>Last</em>, let's open <code>ContactFactory</code>. And we do almost the same way with <code>CompanyFactory</code>. Except, the value of <code>user_id</code> is not taken directly from <code>User</code> model. Why? Because if you remember <code>contacts</code> table also has relationship to <code>companies</code> table. We need to make both tables to have the same user id.</p><p>To do that we can randomly choose a company id, using that id to find the model instance, and then get its user id.</p><pre class="prettyprint linenums">Company::pluck('id')-&gt;random()
+Company::find(Company::pluck('id')-&gt;random())
+Company::find(Company::pluck('id')-&gt;random())-&gt;user_id</pre><p>Here how we implement that in <code>ContactFactory</code>.</p><p><strong>database/factories/ContactFactory.php</strong></p><pre class="prettyprint linenums">public function definition()
+{
+ &nbsp;return [
+ &nbsp; &nbsp;// ...
+ &nbsp; &nbsp;'user_id' =&gt; Company::find(Company::pluck('id')-&gt;random())-&gt;user_id
+  ];
+}</pre><p>An alternative way is to get all companies, take one item randomly, and get its user id. It's much simpler that the code before.</p><pre class="prettyprint linenums">Company::all()-&gt;random()-&gt;user_id</pre><p>Go to terminal and run this command.</p><pre class="prettyprint linenums">php artisan migrate:fresh --seed</pre><p>If you now see your database, you'll have 5 users, 50 companies with random user id, and then 250 contacts.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-10_06-09-04-bac875e51ec6ffc9a83099d4a98f2c5e.png"></figure><p><br></p><h4>3. 2nd option: Advance</h4><p><em>First</em>, like the first option, before we generate companies and contacts table with Factory, we generate some users, we'll create 5 users in this case. Then we loop through each user intance using <code>each</code> method, and pass a function.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create(function ($user) {
+ &nbsp;
+});</pre><p><em>Second</em>, we move the <code>Compan::factory</code> code into the function. We also change the number of companies that will be generated from <code>50</code> to <code>10</code>. However it will produce the same result: <code>5*10 =50</code>.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create(function ($user) {
+  Company::factory()-&gt;hasContacts(5)-&gt;count(10)-&gt;create();
+});</pre><p><em>Third</em>, change <code>hasContacts</code> magic method to <code>has</code> method, and pass the <code>Contact::factory</code> in.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create()-&gt;each(function ($user) {
+ &nbsp;Company::factory()-&gt;has(
+ &nbsp; &nbsp;Contact::factory()-&gt;count(5)
+  )
+  -&gt;count(10)-&gt;create();
+});</pre><p><em>Fourth</em>, specify <code>user_id</code> in company model creation by specifying an array contains <code>user_id</code>. We can get the value from <code>$user</code> instance.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create()-&gt;each(function ($user) {
+ &nbsp;Company::factory()-&gt;has(
+ &nbsp; &nbsp;Contact::factory()-&gt;count(5)
+  )
+ &nbsp;-&gt;count(10)-&gt;create([
+ &nbsp; &nbsp;'user_id' =&gt; $user-&gt;id
+  ]);
+});</pre><p><em>Last</em>, we need to pass <code>user_id</code> to contact model creation. Since we're not call <code>create</code> method we cannot do the same way with the previous step. As alternative we can use <a href="https://laravel.com/docs/8.x/database-testing#factory-states" rel="noopener noreferrer" target="_blank">factory state</a> which return an array contains <code>user_id</code>. It's value is taken from the company instance.</p><pre class="prettyprint linenums">User::factory()-&gt;count(5)-&gt;create()-&gt;each(function ($user) {
+ &nbsp;Company::factory()-&gt;has(
+ &nbsp; &nbsp;Contact::factory()-&gt;count(5)-&gt;state(function ($attributes, Company $company) {
+ &nbsp; &nbsp; &nbsp;return ['user_id' =&gt; $company-&gt;user_id];
+ &nbsp;  })
+  )
+ &nbsp;-&gt;count(10)-&gt;create([
+ &nbsp; &nbsp;'user_id' =&gt; $user-&gt;id
+  ]);
+});</pre><p>That's it, we don't need to touch <code>CompanyFactory</code>, <code>ContactFactory</code> or other files. Go to terminal and run this migrate &amp; seed command.</p><pre class="prettyprint linenums">php artisan migrate:fresh --seed</pre><p>If you now see your database, you'll have 5 users, 50 companies with random user id, and then 250 contacts. You'll see in first 50 rows have user_id 1, next 50 rows have user_id 2, and so on.</p><figure><img src="https://img-c.udemycdn.com/redactor/raw/article_lecture/2022-01-10_06-09-32-52df2b82fcd77a187326eb2533e5fce9.png"></figure><p><br></p>

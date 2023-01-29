@@ -1,0 +1,20 @@
+<p>In the previous video you have seen how to retrieve the authenticated user by using <code>auth</code> global helper function. Beside this helper Laravel also provide some alternative ways like so:</p><ul><li><p>Using <code>Auth</code> Facade</p></li><li><p>Using <code>Request</code> instance or <code>request</code> helper</p></li></ul><p><br></p><h4>Using Auth Facade</h4><p>You can retrieve the current user's instance using this syntax:</p><pre class="prettyprint linenums">use Illuminate\Support\Facades\Auth;
+
+$user = Auth::user(); // this is equivalent with auth()-&gt;user()</pre><p>If you want to get only the authenticated user's id you can use this syntax:</p><pre class="prettyprint linenums">use Illuminate\Support\Facades\Auth;
+
+$user = Auth::id(); // this is equivalent with auth()-&gt;id()</pre><p>You can also determine if the user already logged in by using <code>check()</code> method. This method will return <code>true</code> if the user authenticated. Otherwise it will return <code>false</code>.</p><pre class="prettyprint linenums">use Illuminate\Support\Facades\Auth;
+
+if (Auth::check()) {
+&nbsp; // The user is logged in.
+} else {
+&nbsp; // The user is not logged in.
+}
+</pre><p><br></p><h4>Using Request Instance</h4><p>You can retrieve the current user's instance via <code>Request</code> instance like this.</p><pre class="prettyprint linenums">use Illuminate\Http\Request;
+
+public function store(Request $request)
+{
+&nbsp; $user = $request-&gt;user();
+}</pre><p>You can also retrieve the current user's instance via <code>request</code> global helper function like this.</p><pre class="prettyprint linenums">public function store()
+{
+&nbsp; $user = request()-&gt;user();
+}</pre>

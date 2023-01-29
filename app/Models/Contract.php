@@ -10,20 +10,28 @@ use Illuminate\Database\Eloquent\Model;
 class Contract extends Model
 {
     use HasFactory;
-    protected $fillable = ['first_name','last_name','email','phone','address','company_id'];    
+    protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'address', 'company_id','user_id'];
     public $searchColumns = ['first_name', 'last_name', 'email', 'company.name'];
     public $filterColumns = ['company_id'];
-    public function company(){
+    public function company()
+    {
         return $this->belongsTo(Company::class);
     }
-
-    public function scopeLatestFirst($query){
-        return $query->orderBy('id','desc');
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
-    protected static function boot(){
+    public function scopeLatestFirst($query)
+    {
+        return $query->orderBy('id', 'desc');
+    }
+
+    protected static function boot()
+    {
         parent::boot();
         static::addGlobalScope(new FilterScope);
         static::addGlobalScope(new ContractSearchScope);
-    }
+    }    
 }
