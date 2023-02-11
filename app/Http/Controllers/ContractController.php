@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -19,71 +20,50 @@ class ContractController extends Controller
 
     public function index()
     {
-        $user = auth()->user();
-        $companies = $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $companies = Company::userCompanies();
         //DB::enableQueryLog();
-        $contracts = $user->contract()->latestFirst()->paginate(10);
+        $contracts = auth()->user()->contract()->latestFirst()->paginate(10);
         //dd(DB::getQueryLog());
         return view('contracts.index', compact('contracts', 'companies'));
     }
 
     public function create()
     {
-        $user = auth()->user();
         $contract = new Contract();
-        $companies =  $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $companies = Company::userCompanies();
         return view('contracts.create', compact('companies', 'contract'));
     }
 
-    public function edit($id)
+
+
+    public function edit(Contract $contract)
     {
-        $user = auth()->user();
-        $contract = Contract::findOrFail($id);
-        $companies = $user->companies()->orderBy('name')->pluck('name', 'id')->prepend('All Companies', '');
+        $companies = Company::userCompanies();
         return view('contracts.edit', compact('companies', 'contract'));
     }
 
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email',
-            'address' => 'required',
-            'company_id' => 'required|exists:companies,id',
-        ]);
 
         $request->user()->contracts->create($request->all());
 
         return redirect()->route('contracts.index')->with('message', 'Contract has been added successfully');
     }
 
-    public function update($id, Request $request)
+
+    public function update(Contract $contract, ContactRequest $request)
     {
-
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email',
-            'address' => 'required',
-            'company_id' => 'required|exists:companies,id',
-        ]);
-
-        $contract = Contract::findOrFail($id);
         $contract->update($request->all());
-
         return redirect()->route('contracts.index')->with('message', 'Contract has been updated successfully');
     }
 
-    public function show($id)
+    public function show(Contract $contract)
     {
-        $contract = Contract::find($id);
         return view('contracts.show', compact('contract'));
     }
 
-    public function destroy($id)
+    public function destroy(Contract $contract)
     {
-        $contract = Contract::findOrFail($id);
         $contract->delete();
         return back()->with('message', 'Contract has been deleted successfully');
     }

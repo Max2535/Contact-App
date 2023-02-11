@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Contract;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -27,7 +28,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         $this->configureRateLimiting();
+
+        /*Route::bind('contract',function($value){
+            return Contract::where('first_name',$value)->firstOrFail();
+        });*/
 
         $this->routes(function () {
             Route::middleware('api')

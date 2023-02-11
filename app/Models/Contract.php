@@ -33,5 +33,6 @@ class Contract extends Model
         parent::boot();
         static::addGlobalScope(new FilterScope);
         static::addGlobalScope(new ContractSearchScope);
-    }    
+    }   
+    
 }

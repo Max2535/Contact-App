@@ -52,44 +52,15 @@ php artisan make:migration add_user_id_to_contracts_table
 php artisan migrate
 php artisan make:controller Settings\AccountController
 
+php artisan make:controller CompanyController --resource
 
+php artisan make:controller CompanyController --model=Company
 
+php artisan route:list --name=contracts --path=api
 
+php artisan make:controller API/ContractController --api
+php artisan make:controller API/CompanyController --api --model=Company
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+php artisan make:request ContactRequest
+php artisan make:request StoreRequest
+php artisan make:request UpdateRequest
