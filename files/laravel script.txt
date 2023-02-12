@@ -62,5 +62,4 @@ php artisan make:controller API/ContractController --api
 php artisan make:controller API/CompanyController --api --model=Company
 
 php artisan make:request ContactRequest
-php artisan make:request StoreRequest
-php artisan make:request UpdateRequest
+php artisan make:request CompanyRequest

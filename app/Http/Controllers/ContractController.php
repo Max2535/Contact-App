@@ -65,6 +65,6 @@ class ContractController extends Controller
     public function destroy(Contract $contract)
     {
         $contract->delete();
-        return back()->with('message', 'Contract has been deleted successfully');
+        return redirect()->route('contracts.index')->with('message', 'Contract has been deleted successfully');
     }
 }
