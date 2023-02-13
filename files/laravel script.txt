@@ -63,3 +63,8 @@ php artisan make:controller API/CompanyController --api --model=Company
 
 php artisan make:request ContactRequest
 php artisan make:request CompanyRequest
+
+composer require barryvdh/laravel-debugbar --dev
+composer require beyondcode/laravel-query-detector --dev
+php artisan vendor:publish --provider=BeyondCode\QueryDetector\QueryDetectorServiceProvider
+php artisan vendor:publish

@@ -1,0 +1,12 @@
+
+Gist-for-this-lesson
+https://gist.github.com/edomaru/95a520bb26ec24ecbb4620cda95ac95b
+
+Source-code-for-this-lesson
+https://bitbucket.org/edomaru/laravel-contact-app-l8/commits/badc8c344b5c75fdb2b6273aa1ae7b26994c6507
+
+Eager-loading-references
+https://laravel.com/docs/8.x/eloquent-relationships#eager-loading
+
+Counting-related-models-references
+https://laravel.com/docs/8.x/eloquent-relationships#counting-related-models
