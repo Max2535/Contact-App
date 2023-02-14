@@ -12,6 +12,8 @@ class Company extends Model
     //protected $guarded = [];
     protected $fillable = ['name', 'address', 'email', 'website'];
     public $searchColumns = ['name', 'address', 'email', 'website'];
+    
+    //protected $with = ['contacts'];
     public function contacts()
     {
         return $this->hasMany(Contract::class);

@@ -4,6 +4,7 @@ use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\Settings\AccountController;
+use App\Http\Controllers\Settings\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,4 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/contracts/{contract}', [ContractController::class, 'destroy'])->name('contracts.destroy');
     Route::get('/contracts/{contract}/edit', [ContractController::class, 'edit'])->name('contracts.edit');
     Route::get('/settings/account', [AccountController::class, 'index']);
+    Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile.edit');
+    Route::post('/settings/update', [ProfileController::class, 'update'])->name('settings.profile.update');
+    Route::put('/settings/update', [ProfileController::class, 'update'])->name('settings.profile.update');
 });

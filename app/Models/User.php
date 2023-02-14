@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'first_name',
+        'last_name',
+        'bio',
+        'company',
+        'profile_picture',
     ];
 
     /**
@@ -33,7 +38,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $with = ['contract','companies'];
+    protected $with = ['contract', 'companies'];
 
     /**
      * The attributes that should be cast.
@@ -52,5 +57,10 @@ class User extends Authenticatable
     public function companies()
     {
         return $this->hasMany(Company::class);
+    }
+
+    public function fullName()
+    {
+        return $this->first_name . " " . $this->last_name;
     }
 }

@@ -13,6 +13,7 @@ class Contract extends Model
     protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'address', 'company_id','user_id'];
     public $searchColumns = ['first_name', 'last_name', 'email', 'company.name'];
     public $filterColumns = ['company_id'];
+    protected $with = ['company'];
     public function company()
     {
         return $this->belongsTo(Company::class);

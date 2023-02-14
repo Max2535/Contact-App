@@ -68,3 +68,6 @@ composer require barryvdh/laravel-debugbar --dev
 composer require beyondcode/laravel-query-detector --dev
 php artisan vendor:publish --provider=BeyondCode\QueryDetector\QueryDetectorServiceProvider
 php artisan vendor:publish
+php artisan make:controller Settings\ProfileController --resource
+
+php artisan make:request ProfileUpdateRequest

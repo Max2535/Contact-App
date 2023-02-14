@@ -30,11 +30,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($message = session('message'))
-                                    <div class="alert alert-success">
-                                        {{$message}}
-                                    </div>
-                                @endif
+                                @include('layouts._message')
                                 @if ($contracts->count())
                                     @foreach ($contracts as $index => $contract)
                                         <tr>
