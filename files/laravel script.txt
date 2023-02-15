@@ -71,3 +71,4 @@ php artisan vendor:publish
 php artisan make:controller Settings\ProfileController --resource
 
 php artisan make:request ProfileUpdateRequest
+php artisan storage:link

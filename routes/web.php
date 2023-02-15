@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\Settings\AccountController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -90,4 +91,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::post('/settings/update', [ProfileController::class, 'update'])->name('settings.profile.update');
     Route::put('/settings/update', [ProfileController::class, 'update'])->name('settings.profile.update');
+});
+
+Route::get('/download',function(){
+     return Storage::download('profile-picture-6.png','profile.png');
 });
