@@ -56,7 +56,7 @@
                         </table>
 
                         {{
-                            $contracts->appends(request()->only('company_id'))->links()
+                            $contracts->appends(request()->only('company_id','search'))->links()
                         }}
                     </div>
                 </div>

@@ -13,11 +13,11 @@ class SearchScope implements Scope
 
     public function apply(Builder $builder, Model $model)
     {
-        if ($search = request('search')) {
+        if ($search = request()->query('search')) {
             $columns = property_exists($model, 'searchColumns') ? $model->searchColumns : $this->searchColumns;
             foreach ($columns as $index => $column) {
                 $arr = explode('.', $column);
-                $method = $index ===0 ? 'where':'orWhere';
+                $method = $index === 0 ? 'where' : 'orWhere';
                 if (count($arr) == 2) {
                     $method .= 'Has';
                     list($relationship, $col) = $arr;

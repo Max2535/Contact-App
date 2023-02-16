@@ -16,7 +16,7 @@ class Contract extends Model
     protected $with = ['company'];
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class)->withoutGlobalScopes();
     }
     
     public function user()
